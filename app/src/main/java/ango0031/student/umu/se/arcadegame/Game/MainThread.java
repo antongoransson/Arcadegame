@@ -11,27 +11,37 @@ import android.widget.Button;
  */
 
 public class MainThread extends Thread {
-    public static final int MAX_FPS = 30;
+    public static final int MAX_FPS = 50;
     private double averageFPS;
     private SurfaceHolder surfaceHolder;
     private GamePanel gamePanel;
     private boolean running;
-    public static Canvas canvas;
-    private Button button;
+    private Canvas canvas;
 
+    /**
+     * Skapar en ny tråd
+     * @param surfaceHolder innehåller ytan där spelaren rör på sig
+     * @param gamePanel
+     * @param canvas
+     */
+    public MainThread(SurfaceHolder surfaceHolder, GamePanel gamePanel,Canvas canvas) {
+        super();
+        this.surfaceHolder = surfaceHolder;
+        this.gamePanel = gamePanel;
+        this.canvas = canvas;
+    }
 
+    /**
+     * Sätter att tråden ska köras till true eller false
+     * @param running true eller false
+     */
     public void setRunning(boolean running) {
         this.running = running;
     }
 
-    public MainThread(SurfaceHolder surfaceHolder, GamePanel gamePanel, Button button) {
-        super();
-        this.surfaceHolder = surfaceHolder;
-        this.gamePanel = gamePanel;
-        this.button = button;
-        button.setVisibility(View.INVISIBLE);
-    }
-
+    /**
+     * Kallar på Gamepanels update samt draw MAX_FPS ggr/sekund
+     */
     @Override
     public void run() {
         long startTime;
@@ -64,7 +74,6 @@ public class MainThread extends Thread {
                 }
             }
             ;
-
             timeMillis = (System.nanoTime() - startTime) / 1000000;
             waitTime = targetTime - timeMillis;
             try {

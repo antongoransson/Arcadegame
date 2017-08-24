@@ -8,6 +8,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -17,6 +20,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,12 +45,20 @@ public class ResultActivity extends AppCompatActivity {
             // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.results_view);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
 
-
-        ListView list= (ListView)findViewById(R.id.results_list);
-         List<String> results = getScore();
-        Log.d("Hello","List"+results);
-        list.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,results));
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                layoutManager.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+        ViewAdapter adapter = new ViewAdapter(this,  getScore());
+//        adapter.setClickListener(this);
+        recyclerView.setAdapter(adapter);
+//
+//        ListView list= (ListView)findViewById(R.id.results_list);
+//         List<String> results = getScore();
+//        list.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,results));
 
     }
 
@@ -53,10 +66,20 @@ public class ResultActivity extends AppCompatActivity {
         SharedPreferences results = getSharedPreferences("RESULTS", Context.MODE_PRIVATE);
         List<String> list;
         Set<String> score= results.getStringSet("SCORE", null);
-        Log.d("Hello","Sore "+score);
         if(score!=null) {
             score = new TreeSet<>(score);
              list = new ArrayList<>(score);
+            Object [] list1 = list.toArray();
+             Arrays.sort(list1, new Comparator<Object>() {
+                @Override
+                public int compare(Object o1, Object o2) {
+                    return Integer.valueOf((String)o2).compareTo(Integer.valueOf((String)o1));
+                }
+            });;
+            list = new ArrayList<>();
+            for(Object o:list1){
+                list.add(o.toString());
+            }
         } else
             list = new ArrayList<>();
         return list;

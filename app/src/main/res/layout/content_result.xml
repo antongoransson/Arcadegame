@@ -7,16 +7,16 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="ango0031.student.umu.se.arcadegame.ResultActivity"
     tools:showIn="@layout/activity_result"
-    android:layout_gravity="center">
+    android:background="@android:color/holo_orange_light">
 
 
-    <ListView
-        android:id="@+id/results_list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-
-
-    </ListView>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/results_view"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

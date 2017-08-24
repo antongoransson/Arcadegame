@@ -30,11 +30,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private MainThread thread;
 
 
-
-//    private SceneManager manager;
-
-    private Rect r = new Rect();
-
     private RectPlayer player;
     private Point playerPoint;
     private ObstacleManager obstacleManager;
@@ -48,53 +43,59 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private Button button;
 
     private Context context;
+    private  Canvas canvas;
 
 
     public GamePanel(Context context, Button button) {
         super(context);
         getHolder().addCallback(this);
 
-        thread = new MainThread(getHolder(), this, button);
+        canvas = new Canvas();
+        thread = new MainThread(getHolder(), this, canvas);
 
         setFocusable(true);
 
         this.button = button;
-        this.context=context;
+        this.context = context;
 
         player = new RectPlayer(new Rect(100, 100, 200, 200), Color.rgb(255, 0, 0));
-        playerPoint = new Point(Constants.SCREEN_WIDTH / 2, Constants.SCREEN_HEIGHT);
+        playerPoint = new Point(Constants.SCREEN_WIDTH / 2, Constants.SCREEN_HEIGHT - 100);
         player.update(playerPoint);
 
-        obstacleManager = new ObstacleManager(200, 350, 75, Color.BLUE, player.getShots());
+        obstacleManager = new ObstacleManager(200, 350, 150, player.getShots());
 
         orientationData = new OrientationData();
         orientationData.register();
         frameTime = System.currentTimeMillis();
 
-
     }
-
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
     }
-    public boolean gameOver(){
-        return gameOver;
-    }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        thread = new MainThread(getHolder(), this, button);
-
+        thread = new MainThread(getHolder(), this, canvas);
         thread.setRunning(true);
         thread.start();
     }
 
-    public void shutDown(){
+    /**
+     * Säger år tråden att sluta kalla på update och draw
+     */
+    public void shutDown() {
         thread.setRunning(false);
     }
 
+    public void reset() {
+        playerPoint = new Point(Constants.SCREEN_WIDTH / 2, Constants.SCREEN_HEIGHT - 100);
+        player.update(playerPoint);
+        player.resetShots();
+        obstacleManager = new ObstacleManager(200, 350, 150, player.getShots());
+        movingPlayer = false;
+    }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
@@ -112,18 +113,23 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
+    /**
+     * Tar emot ett touch event och om det är ett tryck avfyras ett skott
+     * @param event
+     * @return
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (!gameOver && player.getRectangle().contains((int) event.getX(), (int) event.getY())){
+                if (!gameOver && player.getRectangle().contains((int) event.getX(), (int) event.getY())) {
                     movingPlayer = true;
                     player.shoot();
                 }
-                if (!gameOver ){
+                if (!gameOver) {
                     player.shoot();
                 }
-                if (gameOver && System.currentTimeMillis() - gameOverTime >= 2000) {
+                if (gameOver && System.currentTimeMillis() - gameOverTime >= 1000) {
                     gameOver = false;
                     orientationData.newGame();
                     reset();
@@ -140,56 +146,33 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         return true;
     }
 
-    public void reset() {
-        playerPoint = new Point(Constants.SCREEN_WIDTH / 2, Constants.SCREEN_HEIGHT);
-        player.update(playerPoint);
-        obstacleManager = new ObstacleManager(200, 350, 75, Color.BLUE,player.getShots());
-        movingPlayer= false;
-
-    }
-
 
     public void update() {
-
-
         if (!gameOver) {
-            if(frameTime < Constants.INIT_TIME)
-                frameTime= Constants.INIT_TIME;
-            int elapstedTime = (int) (System.currentTimeMillis()-frameTime);
+            if (frameTime < Constants.INIT_TIME)
+                frameTime = Constants.INIT_TIME;
+            int elapstedTime = (int) (System.currentTimeMillis() - frameTime);
             frameTime = System.currentTimeMillis();
-            if(orientationData.getOrientation()!=null&& orientationData.getStartOrientation()!=null){
-                float pitch = orientationData.getOrientation()[1]-orientationData.getStartOrientation()[1];
-                float roll = orientationData.getOrientation()[2]-orientationData.getStartOrientation()[2];
-
-                float xSpeed = 2*roll*Constants.SCREEN_WIDTH/1000f; // Om skärmen är maximalt lutad -> en sekund att ta sig över den
-                float ySpeed = pitch*Constants.SCREEN_HEIGHT/1000f;
-
-                playerPoint.x+=Math.abs(xSpeed*elapstedTime) > 5? xSpeed*elapstedTime: 0;
-                playerPoint.y-=Math.abs(ySpeed*elapstedTime) > 5? ySpeed*elapstedTime: 0;
+            if (orientationData.getOrientation() != null && orientationData.getStartOrientation() != null) {
+                float roll = orientationData.getOrientation()[2] - orientationData.getStartOrientation()[2];
+                float xSpeed = 2 * roll * Constants.SCREEN_WIDTH / 1000f; // Om skärmen är maximalt lutad -> en sekund att ta sig över den
+                playerPoint.x += Math.abs(xSpeed * elapstedTime) > 5 ? xSpeed * elapstedTime : 0;
             }
-            if(playerPoint.x <0)
+            if (playerPoint.x < 0)
                 playerPoint.x = 0;
-            else if (playerPoint.x>Constants.SCREEN_WIDTH)
+            else if (playerPoint.x > Constants.SCREEN_WIDTH)
                 playerPoint.x = Constants.SCREEN_WIDTH;
-            if(playerPoint.y <0)
-                playerPoint.y = 0;
-            else if (playerPoint.y>Constants.SCREEN_HEIGHT)
-                playerPoint.y = Constants.SCREEN_HEIGHT;
 
             player.update(playerPoint);
             obstacleManager.update();
 
             if (obstacleManager.playerCollides(player)) {
                 gameOver = true;
-
                 gameOverTime = System.currentTimeMillis();
             }
         }
     }
 
-    public void terminate() {
-
-    }
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
@@ -198,32 +181,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         player.draw(canvas);
         obstacleManager.draw(canvas);
         if (gameOver) {
-            Intent intent = new Intent();
             int xPos = (canvas.getWidth() / 2);
             Paint textPaint = new Paint();
-            textPaint.setARGB(200, 254, 0, 0);
+            textPaint.setARGB(200, 0, 0, 0);
             textPaint.setTextAlign(Paint.Align.CENTER);
             textPaint.setTextSize(200);
             int yPos = (int) ((canvas.getHeight() / 2) - ((textPaint.descent() + textPaint.ascent()) / 2));
-            //((textPaint.descent() + textPaint.ascent()) / 2) is the distance from the baseline to the center.
-
 
             canvas.drawText("Game Over", xPos, yPos, textPaint);
+            textPaint.setTextSize(50);
+            canvas.drawText("Touch the screen to try again or", xPos, yPos+100, textPaint);
+            canvas.drawText("press back to go to the menu", xPos, yPos+150, textPaint);
+
         }
 
     }
-    public void putScore(){
-        SharedPreferences results = context.getSharedPreferences("RESULTS", Context.MODE_PRIVATE);
-        List<String> list;
-        SharedPreferences.Editor editor = results.edit();
-        Set<String> score= results.getStringSet("SCORE", null);
-        if(score!=null)
-            score = new TreeSet<>(score);
-         else
-            score = new TreeSet<>();
-        Log.d("score","SCORE "+score);
-            score.add(score.toString());
-            editor.putStringSet("SCORE", score);
-            editor.commit();
-    }
+
+
 }

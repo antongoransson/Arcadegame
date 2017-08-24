@@ -26,7 +26,6 @@ public class ObstacleManager {
     private int playerGap;
     private int obstacleGap;
     private int obstacleHeight;
-    private int color;
 
     private long startTime;
     private long initTime;
@@ -34,17 +33,16 @@ public class ObstacleManager {
     private List<Rect> shots;
     private int score = 0;
 
-    public ObstacleManager(int playerGap, int obstacleGap, int obstacleHeight, int color, List<Rect> shots) {
+    public ObstacleManager(int playerGap, int obstacleGap, int obstacleHeight, List<Rect> shots) {
         this.playerGap = playerGap;
         this.obstacleGap = obstacleGap;
-        this.color = color;
         this.obstacleHeight = obstacleHeight;
 
         this.shots = shots;
 
         startTime = initTime = System.currentTimeMillis();
 
-        obstacles = new ArrayList<Obstacle>();
+        obstacles = new ArrayList<>();
 
         populateObstacles();
 
@@ -53,10 +51,8 @@ public class ObstacleManager {
     private void populateObstacles() {
         int currY = -5 * Constants.SCREEN_HEIGHT / 4;
         while (currY < 0) {
-            int xStart = (int) (Math.random() * (Constants.SCREEN_WIDTH));
-            if (xStart < 50)
-                xStart += 50;
-            obstacles.add(new Obstacle(obstacleHeight, color, xStart, currY, playerGap));
+            int xStart = (int) (Math.random() * (Constants.SCREEN_WIDTH-150));
+            obstacles.add(new Obstacle(obstacleHeight, xStart, currY));
             currY += obstacleHeight + obstacleGap;
 
         }
@@ -81,10 +77,25 @@ public class ObstacleManager {
             scoreSet = new TreeSet<>(scoreSet);
         else
             scoreSet = new TreeSet<>();
-        Log.d("score", "SCORE " + scoreSet);
         scoreSet.add(Integer.toString(score));
+        if (scoreSet.size() > 10) {
+            removeLowest(scoreSet);
+        }
         editor.putStringSet("SCORE", scoreSet);
         editor.commit();
+    }
+
+    private void removeLowest(Set<String> score) {
+        String lowest = "";
+        int index = 0;
+        for (String s : score) {
+            if (index == 0)
+                lowest = s;
+            if (Integer.valueOf((String) lowest).compareTo(Integer.valueOf((String) s)) > 0)
+                lowest = s;
+
+        }
+        score.remove(lowest);
     }
 
     public void update() {
@@ -103,13 +114,9 @@ public class ObstacleManager {
                 }
             }
         }
-        int xStart = (int) (Math.random() * (Constants.SCREEN_WIDTH - playerGap));
-        if (obstacles.size() < 5)
-            obstacles.add(0, new Obstacle(obstacleHeight, color, xStart, obstacles.get(0).getRectangle().top - obstacleHeight - obstacleGap, playerGap));
-        if (obstacles.size() > 0 && obstacles.get(obstacles.size() - 1).getRectangle().top >= Constants.SCREEN_HEIGHT) {
-            obstacles.add(0, new Obstacle(obstacleHeight, color, xStart, obstacles.get(0).getRectangle().top - obstacleHeight - obstacleGap, playerGap));
-            obstacles.remove(obstacles.size() - 1);
-            score++;
+        if (obstacles.size() < 5) {
+            int xStart = (int) (Math.random() * (Constants.SCREEN_WIDTH - 150));
+            obstacles.add(0, new Obstacle(obstacleHeight, xStart, obstacles.get(0).getRectangle().top - obstacleHeight - obstacleGap));
         }
     }
 
@@ -119,7 +126,7 @@ public class ObstacleManager {
             Paint paint = new Paint();
             paint.setTextSize(100);
             paint.setColor(Color.MAGENTA);
-            canvas.drawText("Score " + score, 50, 100, paint);
+            canvas.drawText("Score: " + score, 50, 100, paint);
         }
     }
 }

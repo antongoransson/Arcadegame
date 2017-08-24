@@ -7,6 +7,5 @@ import android.graphics.Canvas;
  */
 
 public interface GameObject {
-    public void draw(Canvas canvs);
-    public void update();
+    public void draw(Canvas canvas);
 }
