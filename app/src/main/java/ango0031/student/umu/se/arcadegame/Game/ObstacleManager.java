@@ -23,7 +23,6 @@ import java.util.concurrent.SynchronousQueue;
 public class ObstacleManager {
     // higher index = lower on screen = higher y value
     private ArrayList<Obstacle> obstacles;
-    private int playerGap;
     private int obstacleGap;
     private int obstacleHeight;
 
@@ -34,10 +33,8 @@ public class ObstacleManager {
     private int score = 0;
 
     public ObstacleManager(int playerGap, int obstacleGap, int obstacleHeight, List<Rect> shots) {
-        this.playerGap = playerGap;
         this.obstacleGap = obstacleGap;
         this.obstacleHeight = obstacleHeight;
-
         this.shots = shots;
 
         startTime = initTime = System.currentTimeMillis();
@@ -51,10 +48,9 @@ public class ObstacleManager {
     private void populateObstacles() {
         int currY = -5 * Constants.SCREEN_HEIGHT / 4;
         while (currY < 0) {
-            int xStart = (int) (Math.random() * (Constants.SCREEN_WIDTH-150));
+            int xStart = (int) (Math.random() * (Constants.SCREEN_WIDTH - 150));
             obstacles.add(new Obstacle(obstacleHeight, xStart, currY));
             currY += obstacleHeight + obstacleGap;
-
         }
     }
 
@@ -68,7 +64,58 @@ public class ObstacleManager {
         return false;
     }
 
-    public void putScore() {
+    public void removeObstacles() {
+        obstacles = new ArrayList<>();
+    }
+
+
+    public void update() {
+        if(startTime < Constants.INIT_TIME)
+             startTime = Constants.INIT_TIME;
+        int elapsedtime = (int) (System.currentTimeMillis() - startTime);
+        startTime = System.currentTimeMillis();
+        float speed = (float) (Math.sqrt(1 + (startTime - initTime) / 1000.0)) * Constants.SCREEN_HEIGHT / (10000.0f);
+        for (int i = 0; i < obstacles.size(); i++) {
+            Obstacle ob = obstacles.get(i);
+            ob.incrementY(speed * elapsedtime);
+            for (int j = 0; j < shots.size(); j++) {
+                Rect shot = shots.get(j);
+                if (Rect.intersects(shot, ob.getRectangle())) {
+                    shots.remove(shot);
+                    obstacles.remove(i);
+                    score++;
+                }
+            }
+        }
+        // Om där är färre än 5 hinder lägg till ett nytt
+        if (obstacles.size() < 5) {
+            int xStart = (int) (Math.random() * (Constants.SCREEN_WIDTH - 150));
+            int yStart = -obstacleHeight - obstacleGap;
+            if (obstacles.size() > 0)
+                yStart = obstacles.get(0).getRectangle().top - obstacleHeight - obstacleGap;
+            obstacles.add(0, new Obstacle(obstacleHeight, xStart, yStart));
+        }
+    }
+
+    /**
+     * Ritar alla hindrena
+     *
+     * @param canvas ytan som ritas på
+     */
+    public void draw(Canvas canvas) {
+        for (Obstacle ob : obstacles) {
+            ob.draw(canvas);
+            Paint paint = new Paint();
+            paint.setTextSize(100);
+            paint.setColor(Color.MAGENTA);
+            canvas.drawText("Score: " + score, 50, 100, paint);
+        }
+    }
+
+    /**
+     * Lägger in resultatet i sharedpreferences
+     */
+    private void putScore() {
         SharedPreferences results = Constants.CURRENT_CONTEXT.getSharedPreferences("RESULTS", Context.MODE_PRIVATE);
         List<String> list;
         SharedPreferences.Editor editor = results.edit();
@@ -85,48 +132,19 @@ public class ObstacleManager {
         editor.commit();
     }
 
+    /**
+     * Tar bort det lägsta resultatet, kallas på när fler än 10 resultat är inlagda
+     *
+     * @param score
+     */
     private void removeLowest(Set<String> score) {
         String lowest = "";
         int index = 0;
         for (String s : score) {
-            if (index == 0)
+            if (index == 0 || Integer.valueOf((String) lowest).compareTo(Integer.valueOf((String) s)) > 0)
                 lowest = s;
-            if (Integer.valueOf((String) lowest).compareTo(Integer.valueOf((String) s)) > 0)
-                lowest = s;
-
+            index++;
         }
         score.remove(lowest);
-    }
-
-    public void update() {
-        int elapsedtime = (int) (System.currentTimeMillis() - startTime);
-        startTime = System.currentTimeMillis();
-        float speed = (float) (Math.sqrt(1 + (startTime - initTime) / 1000.0)) * Constants.SCREEN_HEIGHT / (10000.0f);
-        for (int i = 0; i < obstacles.size(); i++) {
-            Obstacle ob = obstacles.get(i);
-            ob.incrementY(speed * elapsedtime);
-            for (int j = 0; j < shots.size(); j++) {
-                Rect shot = shots.get(j);
-                if (Rect.intersects(shot, ob.getRectangle())) {
-                    shots.remove(shot);
-                    obstacles.remove(i);
-                    score++;
-                }
-            }
-        }
-        if (obstacles.size() < 5) {
-            int xStart = (int) (Math.random() * (Constants.SCREEN_WIDTH - 150));
-            obstacles.add(0, new Obstacle(obstacleHeight, xStart, obstacles.get(0).getRectangle().top - obstacleHeight - obstacleGap));
-        }
-    }
-
-    public void draw(Canvas canvas) {
-        for (Obstacle ob : obstacles) {
-            ob.draw(canvas);
-            Paint paint = new Paint();
-            paint.setTextSize(100);
-            paint.setColor(Color.MAGENTA);
-            canvas.drawText("Score: " + score, 50, 100, paint);
-        }
     }
 }

@@ -14,7 +14,7 @@ import ango0031.student.umu.se.arcadegame.R;
  * Created by Anton on 17/08/2017.
  */
 
-public class Obstacle implements GameObject {
+public class Obstacle {
     private Rect rectangle;
     private Bitmap snail;
 
@@ -41,7 +41,7 @@ public class Obstacle implements GameObject {
     }
 
     /**
-     * Returnerar rektanglen som utgör hindret
+     * Returnerar rektangeln som utgör hindret
      *
      * @return Rect som motsvarar hindret
      */
@@ -64,7 +64,6 @@ public class Obstacle implements GameObject {
      *
      * @param canvas
      */
-    @Override
     public void draw(Canvas canvas) {
         canvas.drawBitmap(snail, null, rectangle, new Paint());
     }

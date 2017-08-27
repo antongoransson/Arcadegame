@@ -21,17 +21,7 @@ public class OrientationData implements SensorEventListener {
     private float[] magOutput;
 
     private float[] orientation = new float[3];
-
-    public float[] getOrientation() {
-        return orientation;
-    }
-
     private float[] startOrientation = null;
-
-    public float[] getStartOrientation() {
-        return startOrientation;
-    }
-
 
 
     public OrientationData() {
@@ -41,6 +31,14 @@ public class OrientationData implements SensorEventListener {
     }
     public void newGame() {
         startOrientation = null;
+    }
+
+    public float[] getOrientation() {
+        return orientation;
+    }
+
+    public float[] getStartOrientation() {
+        return startOrientation;
     }
 
     public void register() {
@@ -74,7 +72,5 @@ public class OrientationData implements SensorEventListener {
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 }

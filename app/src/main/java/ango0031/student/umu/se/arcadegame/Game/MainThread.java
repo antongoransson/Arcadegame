@@ -11,7 +11,7 @@ import android.widget.Button;
  */
 
 public class MainThread extends Thread {
-    public static final int MAX_FPS = 50;
+    private static final int MAX_FPS = 50;
     private double averageFPS;
     private SurfaceHolder surfaceHolder;
     private GamePanel gamePanel;
@@ -59,6 +59,7 @@ public class MainThread extends Thread {
                 canvas = surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder) {
                     gamePanel.update();
+                    if(canvas!=null)
                     gamePanel.draw(canvas);
                 }
             } catch (Exception e) {
