@@ -156,7 +156,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             frameTime = System.currentTimeMillis();
             if (orientationData.getOrientation() != null && orientationData.getStartOrientation() != null) {
                 float roll = orientationData.getOrientation()[2] - orientationData.getStartOrientation()[2];
-                Log.d("ROLL", "ROLL "+roll);
                 float xSpeed =  roll * Constants.SCREEN_WIDTH / 1000f; // Om skärmen är maximalt lutad -> en sekund att ta sig över den
                 playerPoint.x += Math.abs(xSpeed * elapstedTime) > 5 ? xSpeed * elapstedTime : 0;
             }
