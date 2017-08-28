@@ -7,15 +7,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.preference.PreferenceManager;
-import android.provider.SyncStateContract;
-import android.support.constraint.solver.widgets.Rectangle;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.SynchronousQueue;
 
 /**
  * Created by Anton on 17/08/2017.
@@ -145,7 +141,7 @@ public class ObstacleManager {
         int index = 0;
         for (String s : score) {
             String value = s.split(":")[0];
-            if (index == 0 || Integer.valueOf((String) lowest).compareTo(Integer.valueOf((String) value)) > 0)
+            if (index == 0 || Integer.valueOf((String) lowest.split(":")[0]).compareTo(Integer.valueOf((String) value)) > 0)
                 lowest = s;
             index++;
 

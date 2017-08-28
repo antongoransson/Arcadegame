@@ -1,9 +1,6 @@
 package ango0031.student.umu.se.arcadegame.Game;
 
-import android.app.KeyguardManager;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,23 +8,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.provider.SyncStateContract;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.Button;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import ango0031.student.umu.se.arcadegame.R;
-
-import static android.R.attr.button;
-import static android.R.attr.startX;
 
 /**
  * Created by Anton on 15/08/2017.
@@ -36,12 +23,9 @@ import static android.R.attr.startX;
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private MainThread thread;
 
-
     private RectPlayer player;
     private Point playerPoint;
     private ObstacleManager obstacleManager;
-
-    private boolean movingPlayer = false;
 
     private boolean gameOver = false;
     private long gameOverTime;
@@ -60,9 +44,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         getHolder().addCallback(this);
 
         canvas = new Canvas();
-        thread = new MainThread(getHolder(), this, canvas);
         setUpDrawables();
-
 
         setFocusable(true);
         initGame();
@@ -70,7 +52,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void initGame() {
-        player = new RectPlayer(new Rect(100, 100, 250, 250), Color.rgb(255, 0, 0));
+        player = new RectPlayer(new Rect(0, 0, Constants.SCREEN_WIDTH / 9, Constants.SCREEN_WIDTH / 8));
         playerPoint = new Point(Constants.SCREEN_WIDTH / 2, Constants.SCREEN_HEIGHT - 180);
         player.update(playerPoint);
 
@@ -109,7 +91,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         player.resetShots();
         obstacleManager = new ObstacleManager(200, 350, 150, player.getShots());
         player.update(playerPoint);
-        movingPlayer = false;
     }
 
     /**
@@ -130,11 +111,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             }
             retry = false;
         }
-
     }
 
     /**
-     * Tar emot ett touch event och om det är ett tryck avfyras ett skott
+     * Tar emot ett touch event och om det är ett tryck och det inte är gameover avfyras ett skott
+     * annars ifall en halv sekund har gått startar spelet om
      *
      * @param event
      * @return
@@ -143,10 +124,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (!gameOver && player.getRectangle().contains((int) event.getX(), (int) event.getY())) {
-                    movingPlayer = true;
-                    player.shoot();
-                }
                 if (!gameOver)
                     player.shoot();
 
@@ -155,13 +132,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                     orientationData.newGame();
                     reset();
                 }
-                break;
-            case MotionEvent.ACTION_MOVE:
-                if (!gameOver && movingPlayer)
-                    playerPoint.set((int) event.getX(), (int) event.getY());
-                break;
-            case MotionEvent.ACTION_UP:
-                movingPlayer = false;
                 break;
         }
         return true;
@@ -193,13 +163,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 gameOverTime = System.currentTimeMillis();
             }
         }
-
     }
 
+    /**
+     * Ritar bakgrunden, blommorna, spelaren samt hindrena. Om spelet är slut ritas även en förklarande text
+     *
+     * @param canvas
+     */
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        canvas.drawColor(Color.rgb(156,204,101));
+        canvas.drawColor(Color.rgb(156, 204, 101));
 
         for (Rect r : daisiesRects)
             canvas.drawBitmap(daisies, null, r, new Paint());
@@ -220,8 +194,5 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             canvas.drawText("press back to go to the menu", xPos, yPos + 190, textPaint);
 
         }
-
     }
-
-
 }

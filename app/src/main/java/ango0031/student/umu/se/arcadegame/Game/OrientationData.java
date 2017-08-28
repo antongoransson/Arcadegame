@@ -6,8 +6,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import ango0031.student.umu.se.arcadegame.Game.Constants;
-
 /**
  * Created by Anton on 15/08/2017.
  */

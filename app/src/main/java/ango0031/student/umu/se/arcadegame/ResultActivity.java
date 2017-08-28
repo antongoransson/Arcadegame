@@ -1,24 +1,14 @@
 package ango0031.student.umu.se.arcadegame;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -26,15 +16,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import ango0031.student.umu.se.arcadegame.R;
-
+/**
+ * Visar resultaten som fåtts, dessa hämtas via sharedpreferences
+ */
 public class ResultActivity extends AppCompatActivity {
-    private TableLayout table;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,15 +40,18 @@ public class ResultActivity extends AppCompatActivity {
         init();
     }
 
-    public void init() {
+    /**
+     * Skapar tabellrader från resultaten
+     */
+    private void init() {
         TableLayout tableLayout = (TableLayout) findViewById(R.id.table);
         List<String> score = getScore();
         for (int i = 0; i <= score.size(); i++) {
             TableRow row = new TableRow(this);
 
-            TextView scoreTV = createTextView();new TextView(this);
+            TextView scoreTV = createTextView();
             TextView difficultyTV = createTextView();
-            TextView userTV = createTextView();new TextView(this);
+            TextView userTV = createTextView();
             if (i == 0) {
                 scoreTV.setText(R.string.score);
                 difficultyTV.setText(R.string.difficulty);
@@ -93,10 +85,13 @@ public class ResultActivity extends AppCompatActivity {
             case "2": return "Hard";
             default: return "";
         }
-
     }
 
-    public List<String> getScore() {
+    /**
+     * Sorterar samt returnerar resultaten
+     * @return Resultaten i form av en lista
+     */
+    private List<String> getScore() {
         SharedPreferences results = getSharedPreferences("RESULTS", Context.MODE_PRIVATE);
         List<String> list;
         Set<String> score = results.getStringSet("SCORE", null);
@@ -118,8 +113,6 @@ public class ResultActivity extends AppCompatActivity {
         } else
             list = new ArrayList<>();
         return list;
-
-
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -130,5 +123,4 @@ public class ResultActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

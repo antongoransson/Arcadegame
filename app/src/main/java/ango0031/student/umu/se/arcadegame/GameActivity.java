@@ -1,27 +1,20 @@
 package ango0031.student.umu.se.arcadegame;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import java.util.List;
-import java.util.Set;
 
 import ango0031.student.umu.se.arcadegame.Game.Constants;
 import ango0031.student.umu.se.arcadegame.Game.GamePanel;
 
+/**
+ * Aktiviteten som startar själva spelet. Den sätter skärmen till fullscreen och sparar
+ * enhetens bredd samt höjd
+ */
 public class GameActivity extends Activity {
 
     @Override

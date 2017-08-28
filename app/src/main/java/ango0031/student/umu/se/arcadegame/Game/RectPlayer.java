@@ -4,12 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +19,13 @@ import ango0031.student.umu.se.arcadegame.R;
 
 public class RectPlayer {
     private Rect rectangle;
-    private int color;
     private Bitmap idleImg;
     private Bitmap shot;
 
     private List<Rect> shots;
 
-    public RectPlayer(Rect rectangle, int color) {
+    public RectPlayer(Rect rectangle) {
         this.rectangle = rectangle;
-        this.color = color;
         shots = new ArrayList<>();
         BitmapFactory bf = new BitmapFactory();
 

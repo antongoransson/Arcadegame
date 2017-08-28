@@ -2,8 +2,6 @@ package ango0031.student.umu.se.arcadegame.Game;
 
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
-import android.view.View;
-import android.widget.Button;
 
 
 /**
@@ -11,7 +9,7 @@ import android.widget.Button;
  */
 
 public class MainThread extends Thread {
-    private static final int MAX_FPS = 50;
+    private static final int MAX_FPS = 45;
     private double averageFPS;
     private SurfaceHolder surfaceHolder;
     private GamePanel gamePanel;
