@@ -4,11 +4,14 @@ import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.provider.SyncStateContract;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -21,7 +24,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import ango0031.student.umu.se.arcadegame.R;
+
 import static android.R.attr.button;
+import static android.R.attr.startX;
 
 /**
  * Created by Anton on 15/08/2017.
@@ -44,8 +50,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     private Canvas canvas;
 
-    private KeyguardManager keyguardManager;
 
+    private Bitmap daisies;
+    private Rect daisiesRect;
+    private ArrayList<Rect> daisiesRects;
 
     public GamePanel(Context context) {
         super(context);
@@ -53,14 +61,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         canvas = new Canvas();
         thread = new MainThread(getHolder(), this, canvas);
+        setUpDrawables();
 
-        keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
 
         setFocusable(true);
+        initGame();
 
+    }
 
-        player = new RectPlayer(new Rect(100, 100, 200, 200), Color.rgb(255, 0, 0));
-        playerPoint = new Point(Constants.SCREEN_WIDTH / 2, Constants.SCREEN_HEIGHT - 100);
+    private void initGame() {
+        player = new RectPlayer(new Rect(100, 100, 250, 250), Color.rgb(255, 0, 0));
+        playerPoint = new Point(Constants.SCREEN_WIDTH / 2, Constants.SCREEN_HEIGHT - 180);
         player.update(playerPoint);
 
         obstacleManager = new ObstacleManager(200, 350, 150, player.getShots());
@@ -68,8 +79,18 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         orientationData = new OrientationData();
         orientationData.register();
         frameTime = System.currentTimeMillis();
-
     }
+
+    private void setUpDrawables() {
+        BitmapFactory bf = new BitmapFactory();
+        daisies = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.daisies);
+        daisiesRect = new Rect(0, Constants.SCREEN_HEIGHT - 150, Constants.SCREEN_WIDTH - 600, Constants.SCREEN_HEIGHT);
+        daisiesRects = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            daisiesRects.add(new Rect(i * Constants.SCREEN_WIDTH / 4, Constants.SCREEN_HEIGHT - 150, (i + 1) * Constants.SCREEN_WIDTH / 4, Constants.SCREEN_HEIGHT));
+        }
+    }
+
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -83,8 +104,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         thread.start();
     }
 
-     public void reset() {
-        playerPoint = new Point(Constants.SCREEN_WIDTH / 2, Constants.SCREEN_HEIGHT - 100);
+    public void reset() {
+        playerPoint = new Point(Constants.SCREEN_WIDTH / 2, Constants.SCREEN_HEIGHT - 180);
         player.resetShots();
         obstacleManager = new ObstacleManager(200, 350, 150, player.getShots());
         player.update(playerPoint);
@@ -98,7 +119,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      */
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.d("SLÄCKA SKÄRMEN JA?","HEJ");
         boolean retry = true;
         while (retry) {
             try {
@@ -156,7 +176,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             frameTime = System.currentTimeMillis();
             if (orientationData.getOrientation() != null && orientationData.getStartOrientation() != null) {
                 float roll = orientationData.getOrientation()[2] - orientationData.getStartOrientation()[2];
-                float xSpeed =  roll * Constants.SCREEN_WIDTH / 1000f; // Om skärmen är maximalt lutad -> en sekund att ta sig över den
+                float xSpeed = roll * Constants.SCREEN_WIDTH / 1000f; // Om skärmen är maximalt lutad -> en sekund att ta sig över den
                 playerPoint.x += Math.abs(xSpeed * elapstedTime) > 5 ? xSpeed * elapstedTime : 0;
             }
             if (playerPoint.x < 0)
@@ -179,7 +199,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        canvas.drawColor(Color.YELLOW);
+        canvas.drawColor(Color.rgb(156,204,101));
+
+        for (Rect r : daisiesRects)
+            canvas.drawBitmap(daisies, null, r, new Paint());
 
         player.draw(canvas);
         obstacleManager.draw(canvas);

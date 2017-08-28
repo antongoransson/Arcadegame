@@ -27,7 +27,7 @@ public class Obstacle {
     public Obstacle(int rectHeight, int startX, int startY) {
         BitmapFactory bf = new BitmapFactory();
         snail = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.snail);
-        rectangle = new Rect(startX, startY, startX + 150, startY + rectHeight);
+        rectangle = new Rect(startX, startY, startX + 170-40*Constants.DIFFICULTY, startY + 170-40*Constants.DIFFICULTY);
     }
 
     /**
@@ -55,8 +55,8 @@ public class Obstacle {
      * @param y hur många pixlar hindret ska flyttas
      */
     public void incrementY(float y) {
-        rectangle.top += y;
-        rectangle.bottom += y;
+        rectangle.top += y+3f*Constants.DIFFICULTY;
+        rectangle.bottom += y+3f*Constants.DIFFICULTY;
     }
 
     /**

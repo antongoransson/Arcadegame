@@ -3,6 +3,7 @@ package ango0031.student.umu.se.arcadegame;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -39,7 +41,6 @@ public class ResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -47,44 +48,50 @@ public class ResultActivity extends AppCompatActivity {
             // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        table = (TableLayout) findViewById(R.id.table);
+        init();
+    }
 
-
-
-//        TextView diffHeader = new TextView(this);
-//
-//        scoreHeader.setText("Score");
-//        diffHeader.setText("Difficulty");
-//        Log.d("String","String + "+"score");
-//
-//        topRow.addView(scoreHeader);
-//        topRow.addView(diffHeader);
-//        table.addView(topRow,0);
-//
-
+    public void init() {
+        TableLayout tableLayout = (TableLayout) findViewById(R.id.table);
         List<String> score = getScore();
         for (int i = 0; i <= score.size(); i++) {
-
             TableRow row = new TableRow(this);
-             TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
-            row.setLayoutParams(lp);
-            TextView scoreTV = new TextView(this);
-            TextView difficultyTV = new TextView(this);
-            if(i==0){
-                String k = "Score";
-                 Log.d("String","String + "+"score");
-                String d = "Difficulty";
-                scoreTV.setText(score.get(i));
-                difficultyTV.setText(score.get(i).split(":")[0]);
-            }else if (score.get(i-1) != null) {
-                String result = score.get(i-1);
+
+            TextView scoreTV = createTextView();new TextView(this);
+            TextView difficultyTV = createTextView();
+            TextView userTV = createTextView();new TextView(this);
+            if (i == 0) {
+                scoreTV.setText(R.string.score);
+                difficultyTV.setText(R.string.difficulty);
+                userTV.setText(R.string.user_name);
+            } else if (score.get(i - 1) != null) {
+                String result = score.get(i - 1);
                 scoreTV.setText(result.split(":")[0]);
-                difficultyTV.setText(result.split(":")[1]);
+                difficultyTV.setText(getDifficulty(result.split(":")[1]));
+                userTV.setText(result.split(":")[2]);
             }
             row.addView(scoreTV);
             row.addView(difficultyTV);
-//            Log.d("WADSD","I + "+i);
-            table.addView(row, i);
+            row.addView(userTV);
+
+            tableLayout.addView(row);
+        }
+
+    }
+    private TextView createTextView(){
+        TextView tempTV = new TextView(this);
+        tempTV.setTextColor(Color.BLACK);
+        tempTV.setTextSize(25f);
+        tempTV.setGravity(Gravity.CENTER);
+        return tempTV;
+    }
+
+    private String getDifficulty(String difficulty){
+        switch (difficulty){
+            case "0": return "Low";
+            case "1": return "Medium";
+            case "2": return "Hard";
+            default: return "";
         }
 
     }
@@ -118,7 +125,7 @@ public class ResultActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            startActivity(new Intent(this, MenuActivity.class));
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);

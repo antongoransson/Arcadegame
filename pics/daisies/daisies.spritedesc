@@ -1,0 +1,8 @@
+/*----------------------------------------------------------------------------*/
+sprite_sheet "daisies" 256 x 256 margin 1
+
+img "daisies.xcf.bz2"
+
+"daisies" autosize * 1 with img
+  glob "*"
+  ;

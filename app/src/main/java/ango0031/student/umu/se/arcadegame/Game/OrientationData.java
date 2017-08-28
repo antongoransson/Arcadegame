@@ -29,6 +29,7 @@ public class OrientationData implements SensorEventListener {
         accelorometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnometer = manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
+
     public void newGame() {
         startOrientation = null;
     }
@@ -72,5 +73,6 @@ public class OrientationData implements SensorEventListener {
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
 }

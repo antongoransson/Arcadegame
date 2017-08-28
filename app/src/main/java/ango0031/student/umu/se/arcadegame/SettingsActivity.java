@@ -107,9 +107,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        Log.d("HEJ","ID "+id);
         if (id == android.R.id.home) {
-            startActivity(new Intent(getApplicationContext(), MenuActivity.class));
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -160,14 +159,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("example_text"));
+            bindPreferenceSummaryToValue(findPreference("user_name"));
             bindPreferenceSummaryToValue(findPreference("difficulty_list"));
         }
 
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
-
             if (id == android.R.id.home) {
                 startActivity(new Intent(getActivity(), SettingsActivity.class));
                 return true;

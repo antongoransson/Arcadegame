@@ -41,12 +41,8 @@ public class GameActivity extends Activity {
         String difficulty = prefs.getString("difficulty_list", "1");
         Constants.DIFFICULTY = Integer.parseInt(difficulty);
 
-
         GamePanel gameView = new GamePanel(this);
 
-
         setContentView(gameView);
-
-
     }
 }

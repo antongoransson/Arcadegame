@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.preference.PreferenceManager;
 import android.provider.SyncStateContract;
 import android.support.constraint.solver.widgets.Rectangle;
 import android.util.Log;
@@ -56,7 +57,7 @@ public class ObstacleManager {
 
     public boolean playerCollides(RectPlayer player) {
         for (Obstacle ob : obstacles) {
-            if (ob.playerCollide(player) || ob.getRectangle().bottom > Constants.SCREEN_HEIGHT) {
+            if (ob.playerCollide(player) || ob.getRectangle().bottom > Constants.SCREEN_HEIGHT - 150) {
                 putScore();
                 return true;
             }
@@ -70,14 +71,14 @@ public class ObstacleManager {
 
 
     public void update() {
-        if(startTime < Constants.INIT_TIME)
-             startTime = Constants.INIT_TIME;
+        if (startTime < Constants.INIT_TIME)
+            startTime = Constants.INIT_TIME;
         int elapsedtime = (int) (System.currentTimeMillis() - startTime);
         startTime = System.currentTimeMillis();
         float speed = (float) (Math.sqrt(1 + (startTime - initTime) / 1000.0)) * Constants.SCREEN_HEIGHT / (10000.0f);
         for (int i = 0; i < obstacles.size(); i++) {
             Obstacle ob = obstacles.get(i);
-            ob.incrementY(speed * elapsedtime);
+            ob.incrementY(speed * elapsedtime - 3);
             for (int j = 0; j < shots.size(); j++) {
                 Rect shot = shots.get(j);
                 if (Rect.intersects(shot, ob.getRectangle())) {
@@ -117,6 +118,8 @@ public class ObstacleManager {
      */
     private void putScore() {
         SharedPreferences results = Constants.CURRENT_CONTEXT.getSharedPreferences("RESULTS", Context.MODE_PRIVATE);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Constants.CURRENT_CONTEXT);
+        String user_name = prefs.getString("user_name", "No User");
         List<String> list;
         SharedPreferences.Editor editor = results.edit();
         Set<String> scoreSet = results.getStringSet("SCORE", null);
@@ -124,8 +127,8 @@ public class ObstacleManager {
             scoreSet = new TreeSet<>(scoreSet);
         else
             scoreSet = new TreeSet<>();
-        scoreSet.add(Integer.toString(score)+":"+ Integer.toString(Constants.DIFFICULTY));
-        if (scoreSet.size() > 10) {
+        scoreSet.add(Integer.toString(score) + ":" + Integer.toString(Constants.DIFFICULTY) + ":" + user_name);
+        if (scoreSet.size() > 15) {
             removeLowest(scoreSet);
         }
         editor.putStringSet("SCORE", scoreSet);
@@ -142,7 +145,7 @@ public class ObstacleManager {
         int index = 0;
         for (String s : score) {
             String value = s.split(":")[0];
-            if (index == 0 || Integer.valueOf((String) lowest).compareTo(Integer.valueOf((String) s)) > 0)
+            if (index == 0 || Integer.valueOf((String) lowest).compareTo(Integer.valueOf((String) value)) > 0)
                 lowest = s;
             index++;
 

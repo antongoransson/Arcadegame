@@ -42,7 +42,7 @@ public class RectPlayer {
      * Skapar ett nytt skott som utgår från spelaren och lägger dit i listan
      */
     public void shoot() {
-        Rect shot = new Rect(rectangle.left, rectangle.top - 100, rectangle.right - 50, rectangle.bottom);
+        Rect shot = new Rect(rectangle.left, rectangle.top - 150, rectangle.right - 80, rectangle.bottom);
         shots.add(new Rect(shot));
     }
 
@@ -55,6 +55,7 @@ public class RectPlayer {
 
     /**
      * Returnerar listan med skotten som är i spel just nu
+     *
      * @return
      */
     public List<Rect> getShots() {
@@ -63,6 +64,7 @@ public class RectPlayer {
 
     /**
      * Returnerar rektangeln som utgör spelaren
+     *
      * @return
      */
     public Rect getRectangle() {
@@ -81,6 +83,7 @@ public class RectPlayer {
 
     /**
      * Uppdaterar spelaren position med hjälp av den nya punkten samt flyttar alla skott 15 pixlar uppåt
+     *
      * @param point
      */
     public void update(Point point) {
