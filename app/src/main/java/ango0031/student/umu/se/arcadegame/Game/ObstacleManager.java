@@ -124,7 +124,7 @@ public class ObstacleManager {
             scoreSet = new TreeSet<>(scoreSet);
         else
             scoreSet = new TreeSet<>();
-        scoreSet.add(Integer.toString(score));
+        scoreSet.add(Integer.toString(score)+":"+ Integer.toString(Constants.DIFFICULTY));
         if (scoreSet.size() > 10) {
             removeLowest(scoreSet);
         }
@@ -141,9 +141,11 @@ public class ObstacleManager {
         String lowest = "";
         int index = 0;
         for (String s : score) {
+            String value = s.split(":")[0];
             if (index == 0 || Integer.valueOf((String) lowest).compareTo(Integer.valueOf((String) s)) > 0)
                 lowest = s;
             index++;
+
         }
         score.remove(lowest);
     }
