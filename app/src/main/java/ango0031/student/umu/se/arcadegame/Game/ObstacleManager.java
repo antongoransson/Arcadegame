@@ -132,7 +132,7 @@ public class ObstacleManager {
     }
 
     /**
-     * Tar bort det lägsta resultatet, kallas på när fler än 10 resultat är inlagda
+     * Tar bort det lägsta resultatet, kallas på när fler än 15 resultat är inlagda
      *
      * @param score
      */
@@ -144,7 +144,6 @@ public class ObstacleManager {
             if (index == 0 || Integer.valueOf((String) lowest.split(":")[0]).compareTo(Integer.valueOf((String) value)) > 0)
                 lowest = s;
             index++;
-
         }
         score.remove(lowest);
     }

@@ -19,14 +19,15 @@ public class Obstacle {
 
     /**
      * Skapar ett nytt hinder i form av en rektangel
+     *
      * @param rectHeight hur hög rektangeln ska vara
-     * @param startX startvärdet för rektangels vänstra sida
-     * @param startY start startvärdet för rektangels topp
+     * @param startX     startvärdet för rektangels vänstra sida
+     * @param startY     start startvärdet för rektangels topp
      */
     public Obstacle(int rectHeight, int startX, int startY) {
         BitmapFactory bf = new BitmapFactory();
         snail = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.snail);
-        rectangle = new Rect(startX, startY, startX + 170-40*Constants.DIFFICULTY, startY + 170-40*Constants.DIFFICULTY);
+        rectangle = new Rect(startX, startY, startX + 170 - 40 * Constants.DIFFICULTY, startY + 170 - 40 * Constants.DIFFICULTY);
     }
 
     /**
@@ -54,8 +55,8 @@ public class Obstacle {
      * @param y hur många pixlar hindret ska flyttas
      */
     public void incrementY(float y) {
-        rectangle.top += y+3f*Constants.DIFFICULTY;
-        rectangle.bottom += y+3f*Constants.DIFFICULTY;
+        rectangle.top += y + 3f * Constants.DIFFICULTY;
+        rectangle.bottom += y + 3f * Constants.DIFFICULTY;
     }
 
     /**
