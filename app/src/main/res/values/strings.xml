@@ -11,9 +11,9 @@
     <string name="restart_game">Restart Game</string>
     <string name="menu">Go to menu</string>
 
-    <string name="score">Score &#160;  </string>
-    <string name="difficulty">&#160;Difficulty &#160; </string>
-    <string name="user_name">&#160;User Name</string>
+    <string name="score"><b>Score</b> &#160;  </string>
+    <string name="difficulty">&#160;<b>Difficulty</b> &#160; </string>
+    <string name="user_name">&#160;<b>User Name</b></string>
 
     <!-- Strings related to Settings -->
 

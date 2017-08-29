@@ -15,6 +15,12 @@ import android.view.SurfaceView;
 import java.util.ArrayList;
 
 import ango0031.student.umu.se.arcadegame.R;
+import tourguide.tourguide.Overlay;
+import tourguide.tourguide.Pointer;
+import tourguide.tourguide.ToolTip;
+import tourguide.tourguide.TourGuide;
+
+import static android.R.attr.button;
 
 /**
  * Created by Anton on 15/08/2017.
@@ -61,6 +67,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         orientationData = new OrientationData();
         orientationData.register();
         frameTime = System.currentTimeMillis();
+
+
     }
 
     private void setUpDrawables() {
@@ -146,7 +154,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             frameTime = System.currentTimeMillis();
             if (orientationData.getOrientation() != null && orientationData.getStartOrientation() != null) {
                 float roll = orientationData.getOrientation()[2] - orientationData.getStartOrientation()[2];
-                float xSpeed = roll * Constants.SCREEN_WIDTH / 1000f; // Om skärmen är maximalt lutad -> en sekund att ta sig över den
+                float xSpeed = roll * Constants.SCREEN_WIDTH / 700f; // Om skärmen är maximalt lutad -> en sekund att ta sig över den
                 playerPoint.x += Math.abs(xSpeed * elapstedTime) > 5 ? xSpeed * elapstedTime : 0;
             }
             if (playerPoint.x < 0)

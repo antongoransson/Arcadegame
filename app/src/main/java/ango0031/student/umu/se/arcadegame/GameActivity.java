@@ -10,6 +10,10 @@ import android.view.WindowManager;
 
 import ango0031.student.umu.se.arcadegame.Game.Constants;
 import ango0031.student.umu.se.arcadegame.Game.GamePanel;
+import tourguide.tourguide.Overlay;
+import tourguide.tourguide.Pointer;
+import tourguide.tourguide.ToolTip;
+import tourguide.tourguide.TourGuide;
 
 /**
  * Aktiviteten som startar själva spelet. Den sätter skärmen till fullscreen och sparar
@@ -35,6 +39,7 @@ public class GameActivity extends Activity {
         Constants.DIFFICULTY = Integer.parseInt(difficulty);
 
         GamePanel gameView = new GamePanel(this);
+
 
         setContentView(gameView);
     }
