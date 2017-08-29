@@ -15,12 +15,6 @@ import android.view.SurfaceView;
 import java.util.ArrayList;
 
 import ango0031.student.umu.se.arcadegame.R;
-import tourguide.tourguide.Overlay;
-import tourguide.tourguide.Pointer;
-import tourguide.tourguide.ToolTip;
-import tourguide.tourguide.TourGuide;
-
-import static android.R.attr.button;
 
 /**
  * Created by Anton on 15/08/2017.
